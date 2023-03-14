@@ -49,8 +49,8 @@ int main(int argc, char **argv) {
     int writeAmount;
 	
     /* check command line arguments */
-    if (argc != 3) {
-       fprintf(stderr,"usage: %s <hostname> <port>\n", argv[0]);
+    if (argc != 4) {
+       fprintf(stderr,"usage: %s <hostname> <port> <file name and path>\n", argv[0]);
        exit(0);
     }
     hostname = argv[1];
@@ -77,14 +77,9 @@ int main(int argc, char **argv) {
     /* connect: create a connection with the server */
     if (connect(sockfd, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) < 0) 
         error("ERROR connecting");
-
-    /* get message line from the user */
-    printf("Enter file name and path: ");
-    bzero(buf, BUFSIZE);
-    fgets(buf, BUFSIZE, stdin);
     
-    /* send the file name and path to the server */
-    n = write(sockfd, buf, strlen(buf));
+    /* send the file name and path (from command line args) to the server */
+    n = write(sockfd, argv[3], strlen(argv[3]));
     if (n < 0) 
         error("ERROR writing to socket");
 

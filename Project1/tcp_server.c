@@ -134,7 +134,6 @@ int main(int argc, char **argv) {
         if (n < 0) 
             error("ERROR reading from socket");
         
-        buf[strcspn(buf, "\n")] = 0;                            // strip the \n char off to make sure the file name is valid
         printf("Client Requested File: %s\n", buf);
         requestedFile = fopen(buf, "r");                        // attempt to open the requested file
         if (requestedFile == NULL)
