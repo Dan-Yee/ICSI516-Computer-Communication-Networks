@@ -4,6 +4,12 @@
 
 #define INT_MAX 2147483647
 
+/**
+ * Author: Dan Yee
+ * ICSI 516, Project 2
+ * Implementation of Bellman-Ford Distance Vector algorithm
+ */
+
 struct Vertex {
     int value;
     int distance;
