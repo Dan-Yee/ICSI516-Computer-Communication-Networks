@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define INT_MAX 2147483647
 
@@ -13,6 +14,7 @@
 struct Vertex {
     int value;
     int distance;
+    bool isVisited;
 };
 
 struct Edge {
@@ -67,6 +69,21 @@ int bellmanFord()
     return 0;
 }
 
+struct Edge findEdge(int src)
+{
+    for (int edgeI = 0; edgeI < edgeCount; edgeI++)
+        if (edges[edgeI].source == src && !graph[src - 1].isVisited)
+            return edges[edgeI];
+    graph[src - 1].isVisited = true;
+    struct Edge nullEdge = {.source = -1, .destination = -1, .weight = -1};
+    return nullEdge;
+}
+
+int dijkstra()
+{
+    return 0;
+}
+
 /**
  * Adds a new Edge to the Array of edges in this Graph
  */
@@ -78,10 +95,7 @@ int addEdge(int src, int dst, int weight)
     else                                                                // otherwise, expand the array by 1 struct Edge
         edges = realloc(edges, edgeCount * sizeof(struct Edge));
 
-    struct Edge newEdge;
-    newEdge.source = src;
-    newEdge.destination = dst;
-    newEdge.weight = weight;
+    struct Edge newEdge = {.source = src, .destination = dst, .weight = weight};
     edges[edgeCount - 1] = newEdge;
     return 0;
 }
@@ -94,9 +108,7 @@ int createGraph()
     graph = (struct Vertex*) malloc(nodeCount * sizeof(struct Vertex));
     for (int i = 1; i <= nodeCount; i++)
     {
-        struct Vertex newVertex;
-        newVertex.value = i;
-        newVertex.distance = INT_MAX;
+        struct Vertex newVertex = {.value = i, .distance = INT_MAX, .isVisited = false};
         graph[i - 1] = newVertex;
     }
     graph[0].distance = 0;                                              // set the cost of visiting the source node to be 0.
@@ -153,15 +165,21 @@ int main(int argc, char** argv)
         }
     }
 
-    /* Run the Bellman-Ford Distance Vector algorithm */
-    if (bellmanFord() != 0)
-    {
-        perror("Error: Issue running Bellman-Ford algorithm.\n");
-        exit(-1);
-    }
+    // /* Run the Bellman-Ford Distance Vector algorithm */
+    // if (bellmanFord() != 0)
+    // {
+    //     perror("Error: Issue running Bellman-Ford algorithm.\n");
+    //     exit(-1);
+    // }
 
-    // display the final distances
-    printGraph();
+    // // display the final distances
+    // printGraph();
+
+    struct Edge test = findEdge(5);
+    printf("test value: %d\n", test.source);
+    struct Edge test2 = findEdge(5);
+    printf("test2 value: %d\n", test2.source);
+
 
     // close the input file. Free all the allocated memory for the nodes and the edges of the graph.
     fclose(graphInput);
