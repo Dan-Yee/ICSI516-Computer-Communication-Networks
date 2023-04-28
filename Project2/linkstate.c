@@ -21,6 +21,7 @@ struct Edge {
     int source;
     int destination;
     int weight;
+    bool isVisited;
 };
 
 struct Vertex *graph;                                               // keeps track of the Nodes in the graph and the distance to visit them
@@ -69,18 +70,71 @@ int bellmanFord()
     return 0;
 }
 
-struct Edge findEdge(int src)
+/**
+ * Implementation of the extract-min operation for Dijkstra's algorithm. 
+ * Returns the index of the next Node in the graph with the smallest distance vector or -1  
+ */
+int findMinNodeIndex()
 {
-    for (int edgeI = 0; edgeI < edgeCount; edgeI++)
-        if (edges[edgeI].source == src && !graph[src - 1].isVisited)
-            return edges[edgeI];
-    graph[src - 1].isVisited = true;
-    struct Edge nullEdge = {.source = -1, .destination = -1, .weight = -1};
-    return nullEdge;
+    int src = -1;
+    int distance = INT_MAX;
+    for (int nodeI = 0; nodeI < nodeCount; nodeI++)
+    {
+        if (!graph[nodeI].isVisited && graph[nodeI].distance <= distance)
+        {
+            src = nodeI;
+            distance = graph[nodeI].distance;
+        }
+    }
+    return src;
 }
 
+/**
+ * Gets the index in the Edges array of the next unvisited Edge for a Node.
+ * Returns -1 once all edges for the Node have been visited.
+ */
+int findEdgeIndex(int src)
+{
+    for (int edgeI = 0; edgeI < edgeCount; edgeI++)
+    {
+        if (!graph[src - 1].isVisited && !edges[edgeI].isVisited && edges[edgeI].source == src)
+        {
+            edges[edgeI].isVisited = true;
+            return edgeI;
+        }
+    }
+    graph[src - 1].isVisited = true;
+    return -1;
+}
+
+/**
+ * Implementation of Dijkstra's Link State Algorithm
+ * Loops until all Node's in the graph are visited.
+ * This algorithm iterates through all the Edges of each Node, marking them as visited after each pass.
+ */
 int dijkstra()
 {
+    // For every node, scan all the edges and update distance vector
+    for (int currNode = 0; currNode < nodeCount; currNode++)
+    {
+        // the next smallest Node depending on if the first node was visited
+        int src = (graph[0].isVisited) ? findMinNodeIndex() : 0;                                  
+        int currEdge;
+        printf("Next Node = %d\n", graph[src].value);
+        while ((currEdge = findEdgeIndex(src + 1)) != -1)                                          // findEdge() returns an Edge with source -1 when all edges of the specific source have been visited
+        {
+            int tmpDist = graph[src].distance + edges[currEdge].weight;
+            int dst = edges[currEdge].destination;
+            if (tmpDist < graph[dst - 1].distance)
+            {
+                if (graph[dst - 1].distance == INT_MAX)
+                    printf("Updating distance vector of Node %d; Old: INFINITY, New: %d\n", dst, tmpDist);
+                else
+                    printf("Updating distance vector of Node %d; Old: %d, New: %d\n", dst, graph[dst - 1].distance, tmpDist);
+                graph[dst - 1].distance = tmpDist;
+            }
+        }
+    }
     return 0;
 }
 
@@ -95,7 +149,7 @@ int addEdge(int src, int dst, int weight)
     else                                                                // otherwise, expand the array by 1 struct Edge
         edges = realloc(edges, edgeCount * sizeof(struct Edge));
 
-    struct Edge newEdge = {.source = src, .destination = dst, .weight = weight};
+    struct Edge newEdge = {.source = src, .destination = dst, .weight = weight, .isVisited = false};
     edges[edgeCount - 1] = newEdge;
     return 0;
 }
@@ -172,14 +226,15 @@ int main(int argc, char** argv)
     //     exit(-1);
     // }
 
-    // // display the final distances
-    // printGraph();
+    /* Run the Dijkstra's Link State algorithm */
+    if (dijkstra() != 0)
+    {
+        perror("Error: Issue running Dijkstra's algorithm.\n");
+        exit(-1);
+    }
 
-    struct Edge test = findEdge(5);
-    printf("test value: %d\n", test.source);
-    struct Edge test2 = findEdge(5);
-    printf("test2 value: %d\n", test2.source);
-
+    // display the final distances
+    printGraph();
 
     // close the input file. Free all the allocated memory for the nodes and the edges of the graph.
     fclose(graphInput);
