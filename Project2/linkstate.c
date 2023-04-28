@@ -72,7 +72,7 @@ int bellmanFord()
 
 /**
  * Implementation of the extract-min operation for Dijkstra's algorithm. 
- * Returns the index of the next Node in the graph with the smallest distance vector or -1  
+ * Returns the index of the next unvisited Node in the graph with the smallest distance vector or -1 if there are no more unvisited Nodes
  */
 int findMinNodeIndex()
 {
@@ -114,12 +114,11 @@ int findEdgeIndex(int src)
  */
 int dijkstra()
 {
+    int src;                               
+    int currEdge;
     // For every node, scan all the edges and update distance vector
-    for (int currNode = 0; currNode < nodeCount; currNode++)
+    while ((src = findMinNodeIndex()) != -1)
     {
-        // the next smallest Node depending on if the first node was visited
-        int src = (graph[0].isVisited) ? findMinNodeIndex() : 0;                                  
-        int currEdge;
         printf("Next Node = %d\n", graph[src].value);
         while ((currEdge = findEdgeIndex(src + 1)) != -1)                                          // findEdge() returns an Edge with source -1 when all edges of the specific source have been visited
         {
