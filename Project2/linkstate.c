@@ -8,7 +8,8 @@
 /**
  * Author: Dan Yee
  * ICSI 516, Project 2
- * Implementation of Bellman-Ford Distance Vector algorithm
+ * Implementation of Dijkstra's (Link State) algorithm.
+ * Bellman-Ford (Distance Vector) algorithm is also implemented, but not used.
  */
 
 struct Vertex {
@@ -133,6 +134,7 @@ int dijkstra()
                 graph[dst - 1].distance = tmpDist;
             }
         }
+        printf("\n");
     }
     return 0;
 }
