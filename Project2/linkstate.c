@@ -195,15 +195,9 @@ int main(int argc, char** argv)
     }
     
     /* Read all the remaining lines of the files that represent Edges in the graph */
-    while (!feof(graphInput))
+    while (fscanf(graphInput, "%d,%d,%d", &tmpSrc, &tmpDst, &tmpWeight) == 3)
     {
-        /* Read each line that represents an Edge from the file */
-        if (fscanf(graphInput, "%d,%d,%d", &tmpSrc, &tmpDst, &tmpWeight) != 3)
-        {
-            perror("Error: Problem reading specific edge from file.\n");
-            exit(-1);
-        }
-
+        /* Make sure the source and destination Node's for each Edge are valid */
         if (tmpSrc < 1 || tmpSrc > nodeCount || tmpDst < 1 || tmpDst > nodeCount)
         {
             perror("Error: Invalid source/destination Node for Edge.");
