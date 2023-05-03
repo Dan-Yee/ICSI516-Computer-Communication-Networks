@@ -206,7 +206,8 @@ int main(int argc, char** argv)
         else
         {
             /* Add the edge if the Node's are valid */
-            if (addEdge(tmpSrc, tmpDst, tmpWeight) != 0)
+            /* Add Edge from src->dst and from dst->src because the graph is undirected */
+            if (addEdge(tmpSrc, tmpDst, tmpWeight) != 0 || addEdge(tmpDst, tmpSrc, tmpWeight) != 0)
             {
                 perror("Error: Unable to add Edge.\n");
                 exit(-1);
